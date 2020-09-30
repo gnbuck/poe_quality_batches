@@ -24,6 +24,7 @@ Todo
 ----
 
 * Make the script more modular
+* Simplify the win condiion
 * Check every available combination
 
 """
