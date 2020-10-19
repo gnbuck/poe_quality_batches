@@ -1,4 +1,4 @@
-def find_uniques(items: list) -> tuple:
+def find_uniques(items: list) -> list:
     uniques = list()
     temp = list()
     for i in range(len(items)):
@@ -23,18 +23,18 @@ def is_there_remaining(items_len: int, indexes: list, index: int) -> bool:
     return False
 
 
-def compute_values_from_indexes(items, rem):
+def compute_values_from_indexes(items: list, rem: list) -> list:
     # Debug method
     rem_items = [items[x] for x in rem]
     return rem_items
 
-def find_remaining(items: list, indexes: list) -> list:
+def find_remaining(items_len: int, items: list, indexes: list) -> list:
     # Debug method
-    rem = [x for x in range(len(items))]
-    for i in range(len(items)):
+    rem = [x for x in range(items_len)]
+    for i in range(items_len):
         if i in indexes:
             rem.remove(i)
-    rem_items = [items[x] for x in range(len(items)) if x in rem]
+    rem_items = [items[x] for x in range(items_len) if x in rem]
     return rem
 
 
