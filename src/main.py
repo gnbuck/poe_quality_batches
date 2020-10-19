@@ -92,14 +92,11 @@ def pied(
             indexes[-1] = batch_indexes[-1]
             index = find_next_index(indexes, batch_indexes[-1])
 
-        try:    
-            if is_there_remaining(items_len, indexes, batch_indexes[0]) is not True:
-                # Win condition
-                # Occurs when there is no more available items after the first item in
-                # the batch
-                raise IndexError
-        except IndexError:
-            remaining = find_remaining(items, indexes)
+        if (
+            len(batch_indexes) == 0
+            or is_there_remaining(items_len, indexes, batch_indexes[0]) is not True
+        ):
+            remaining = find_remaining(items_len, items, indexes)
             return batches, remaining
 
     if index < items_len:
@@ -119,12 +116,10 @@ def pied(
             indexes.append(batch_indexes[-1])
             batch = [items[batch_indexes[-1]]]
             index = batch_indexes[-1]
-        elif sum(batch) + items[index] > limit:
-            pass
     
     # # Uncomment the following to enable debug
     # # DEBUG: remaining items and indexes
-    # find_remaining(items, indexes)
+    # find_remaining(items_len, items, indexes)
     # print(f"items = {items}")
     # # DEBUG: check each item can be in batches
     # find_adding_errors(items, batches)
@@ -146,6 +141,7 @@ with open("out.txt", "w") as f:
     print(f"\n{len(res)} compos can be really obtained\nBatches are:\n{res}")
     sys.stdout = original_stdout
 
+print(f"For {sum(items) / limit} potential compos,")
 print(
     f"\n{len(res)} compos can be really obtained\nBatches are:\n{res}\n"
     + f"Remaining items are:\n{compute_values_from_indexes(items, remaining)}"
