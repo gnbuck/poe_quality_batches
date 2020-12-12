@@ -8,8 +8,9 @@ combining the values (integers) stored in a list.
 Todo
 ----
 
-* Make the script more modular
-* Simplify the win condiion
-* Check every available combination"""
+* Gather inventory from official website
+* Simplify the win conditon
+* Ensure every available combination is tested
+* Ensure one combination is tested only once"""
 
 __all__ = ["quality_batches"]
