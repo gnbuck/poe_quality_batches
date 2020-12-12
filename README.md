@@ -28,7 +28,7 @@ make run
 - Run in offline mode
 
 ``` shell
-make run
+make run-offline
 ```
 
 ## Contributing
