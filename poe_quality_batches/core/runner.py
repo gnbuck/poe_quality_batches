@@ -1,13 +1,12 @@
-from poe_quality_batches.helpers import (
+from .helpers import (
     find_next_index,
     find_remaining,
     find_adding_errors,
     is_there_remaining,
 )
-from poe_quality_batches.settings import LIMIT as limit
 
 
-def runner(items: list, items_len: int, uniques: list, debug: bool):
+def runner(limit: int, items: list, items_len: int, uniques: list, debug: bool):
     best_batches = list()
     best_batches_remaining = list()
     for start in uniques:
@@ -16,7 +15,7 @@ def runner(items: list, items_len: int, uniques: list, debug: bool):
         batch = [start[1]]  # List of current batch based on the items
         batch_indexes = [start[0]]  # List of current batch based on the indexes
         batches, remaining = find_batches(
-            items, items_len, indexes, batch, batch_indexes, list(), index, debug
+            limit, items, items_len, indexes, batch, batch_indexes, list(), index, debug
         )
         if len(batches) > len(best_batches):
             best_batches = batches.copy()
@@ -25,6 +24,7 @@ def runner(items: list, items_len: int, uniques: list, debug: bool):
 
 
 def find_batches(
+    limit: int,
     items: list,
     items_len: int,
     indexes: list,
@@ -96,10 +96,11 @@ def find_batches(
         find_adding_errors(items, batches)
         print(
             f"index = {index}\nbatch   = {batch}\nindexes = {indexes}\tbatch_indexes ="
-            f"{batch_indexes}\nbatches = {batches}"
+            f"{batch_indexes}\nbatches = {batches}\n"
         )
 
     return find_batches(
+        limit,
         items,
         items_len,
         indexes,

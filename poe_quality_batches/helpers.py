@@ -1,3 +1,29 @@
+import re
+
+from .exceptions.exception_handler import BadObjectType
+
+
+def parse_object_type(object_types, _object):
+    try:
+        _obj = _object.lower()
+    except AttributeError:
+        raise BadObjectType(object_types, _object)
+        # print(f"Can't read object '{_object}'. Please choose from ['flask', 'gem'].")
+
+    if re.match(r"^flask.*$", _obj):
+        obj = object_types[0]["id"]
+    elif re.match(r"^gem.*$", _obj):
+        obj = object_types[1]["id"]
+    else:
+        raise BadObjectType(object_types, _object)
+
+    return obj
+
+
+def is_there_missing_vars():
+    raise NotImplementedError()
+
+
 def find_uniques(items: list) -> list:
     uniques = list()
     temp = list()
@@ -8,45 +34,7 @@ def find_uniques(items: list) -> list:
     return uniques
 
 
-def find_next_index(indexes: list, index: int) -> int:
-    # Return the next available index
-    while index in indexes:
-        index += 1
-    return index
-
-
-def is_there_remaining(items_len: int, indexes: list, index: int) -> bool:
-    # Return next available index
-    i = find_next_index(indexes, index)
-    if i < items_len:
-        return True
-    return False
-
-
 def compute_values_from_indexes(items: list, rem: list) -> list:
     # Debug method
     rem_items = [items[x] for x in rem]
     return rem_items
-
-
-def find_remaining(items_len: int, items: list, indexes: list) -> list:
-    # Debug method
-    rem = [x for x in range(items_len)]
-    for i in range(items_len):
-        if i in indexes:
-            rem.remove(i)
-    # rem_items = [items[x] for x in range(items_len) if x in rem]
-    return rem
-
-
-def find_adding_errors(items: list, batches: list):
-    # Debug method
-    b = list()
-    for _b in batches:
-        b.extend(_b)
-    _items = items.copy()
-    for i in b:
-        try:
-            _items.remove(i)
-        except ValueError:
-            print(f"Too much item ({i}) in batches")

@@ -1,10 +1,28 @@
 import argparse
+from os import environ
 
 from distutils.util import strtobool
 
-from poe_quality_batches.quality_batches import main
+from poe_quality_batches import main
+
+# from poe_quality_batches.quality_batches import main
+from poe_quality_batches.helpers import parse_object_type
+from settings.settings import LIMIT, OBJECT_TYPES
 
 if __name__ == "__main__":
+    # HTTP vars
+    account = environ.get("ACCOUNT", None)
+    character = environ.get("CHARACTER", None)
+    realm = environ.get("REALM", None)
+    league = environ.get("LEAGUE", None).capitalize()
+    tab_index = environ.get("TAB_INDEX", None)
+    poesessid = environ.get("POESESSID", None)
+
+    # Script vars
+    object_type = parse_object_type(OBJECT_TYPES, environ.get("OBJECT_TYPE", None))
+    force_object_type = bool(strtobool(environ.get("FORCE_OBJECT_TYPE", "false")))
+    stash_name = environ.get("STASH_NAME", None)
+
     parser = argparse.ArgumentParser(allow_abbrev=True)
     parser.add_argument(
         "--online",
@@ -22,4 +40,18 @@ if __name__ == "__main__":
     args = parser.parse_args()
     online = bool(strtobool(args.online))
     debug = bool(strtobool(args.debug))
-    main(online, debug)
+
+    main(
+        account,
+        realm,
+        league,
+        character,
+        tab_index,
+        poesessid,
+        object_type,
+        force_object_type,
+        stash_name,
+        online,
+        LIMIT,
+        debug,
+    )
