@@ -1,17 +1,7 @@
 import json
 import requests
 
-from time import sleep
-
 from .helpers import format_stash_list, format_stash_content
-
-# from stashes import STASHES
-
-# print(STASHES[9])
-
-# flasks = STASHES[10]
-
-# print(flasks)
 
 
 def client(
@@ -37,7 +27,6 @@ def client(
         poesessid,
         stash_name,
     )
-    # print(f"\n\nstash_list = {stash_list}\n\n")
 
     stash_contents = [
         get_stash_content(
@@ -52,7 +41,6 @@ def client(
         )
         for stash_metadata in stash_list
     ]
-    # print(f"\n\nstash_contents = {stash_contents}\n\n")
 
     formatted_stash_contents = [
         format_stash_content(stash_content) for stash_content in stash_contents

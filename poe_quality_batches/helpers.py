@@ -8,7 +8,6 @@ def parse_object_type(object_types, _object):
         _obj = _object.lower()
     except AttributeError:
         raise BadObjectType(object_types, _object)
-        # print(f"Can't read object '{_object}'. Please choose from ['flask', 'gem'].")
 
     if re.match(r"^flask.*$", _obj):
         obj = object_types[0]["id"]
