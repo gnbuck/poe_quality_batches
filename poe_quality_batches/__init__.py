@@ -12,6 +12,7 @@ Todo
   * Run a local web interface to easily interact with the tool
 * Project
   * Implement Unit Tests
+  * Refactor HTTP module to oriented object style
 * Script
   * Simplify the win conditon
   * Ensure every available combination is tested
@@ -20,7 +21,13 @@ import sys
 
 from .core.runner import runner
 from .exceptions.exception_handler import BadInput
-from .helpers import is_there_missing_vars, find_uniques, compute_values_from_indexes
+from .helpers import (
+    compute_values_from_indexes,
+    do_debug,
+    find_missing_vars,
+    find_uniques,
+    print_stash_result,
+)
 from .http.client import client
 
 
@@ -29,23 +36,21 @@ def main(
     realm: str,
     league: str,
     character: str,
-    tab_index: str,
     poesessid: str,
     object_type: int,
-    force_object_type: bool,
     stash_name: int,
     online: bool,
     limit: int,
     debug: bool,
-    strict=False,
 ):
-    if strict is True:
-        missing_vars = is_there_missing_vars()
-        if missing_vars is not None:
-            raise BadInput(missing_vars)
+    """Main function."""
+
+    missing_vars = find_missing_vars(account, realm, league, character, poesessid)
+    if missing_vars is True:
+        raise BadInput(missing_vars)
+
     if online is True:
         from settings.settings import TARGET, ENDPOINT
-
         url = TARGET + ENDPOINT
         sample_data = client(
             url,
@@ -53,19 +58,43 @@ def main(
             realm,
             league,
             character,
-            tab_index,
             poesessid,
             object_type,
-            force_object_type,
             stash_name,
         )
-        sample = sample_data[0]
+        sample = sample_data
     else:
-        from settings.settings import SAMPLES
+        from settings.samples import SAMPLES
+        if debug is True:
+            sample = SAMPLES[1:2]
+        else:
+            sample = SAMPLES
 
-        sample = SAMPLES["items_quality"]
+    sys.setrecursionlimit(10000)
 
-    items = sample
+    for stash in sample:
+        # print(f"\n\n--------\nstash = {stash}\n")
+
+        gems_in_stash = stash["items"].get("gems", None)
+        # print(f"\ngems_in_stash = {gems_in_stash}\n")
+        if gems_in_stash is not None:
+            gem_result = run(gems_in_stash, limit, debug)
+            stash["results"]["gems_result"] = gem_result
+
+        flasks_in_stash = stash["items"].get("flasks", None)
+        # print(f"\nflasks_in_stash = {flasks_in_stash}\n")
+        if flasks_in_stash is not None:
+            flask_result = run(flasks_in_stash, limit, debug)
+            stash["results"]["flasks_result"] = flask_result
+
+    print(f"\nsample = {sample}\n")
+
+
+@do_debug
+def run(items, limit, debug):
+    """Wrapper for Runner module."""
+
+    print(items)
     items_len = len(items)
     items = sorted(items, reverse=True)
 
@@ -73,27 +102,12 @@ def main(
     # occurence of a value, and the value corresponding to this index. It helps to
     # reduce the number of time the recursive method is run.
     uniques = find_uniques(items)
+    res, remaining = runner(items, items_len, uniques, limit, debug)
 
-    sys.setrecursionlimit(6000)
-    original_stdout = sys.stdout
-
-    # If the debug is enabled, it increase a lot the execution time. It is faster to
-    # print in this case in a file rather than in the stdout.
-    if debug is True:
-        # Block: file out.txt
-        with open("out.txt", "w") as f:
-            sys.stdout = f
-            res, remaining = runner(limit, items, items_len, uniques, debug)
-            print(f"For {sum(items) / limit} potential compos,")
-            print(
-                f"\n{len(res)} compos can be really obtained\nBatches are:\n{res}"
-                f"Remaining items are:\n{compute_values_from_indexes(items, remaining)}"
-            )
-            sys.stdout = original_stdout
-    else:
-        res, remaining = runner(limit, items, items_len, uniques, debug)
-        print(f"For {sum(items) / limit} potential compos,\n")
-        print(
-            f"{len(res)} compos can be really obtained\nBatches are:\n{res}\n"
-            f"Remaining items are:\n{compute_values_from_indexes(items, remaining)}"
-        )
+    print_stash_result(items, limit, res, remaining, debug)
+    stash_result = {
+        "result": res,
+        "remaining": remaining,
+    }
+    print(f"\nstash_result = {stash_result}\n")
+    return stash_result

@@ -27,10 +27,10 @@ class BadObjectType(ExceptionHandler):
 class BadInput(ExceptionHandler):
     """Wrong input variables exception handler class."""
 
-    def __init__(self, *vars):
-        self.vars = vars
+    def __init__(self, *args):
+        self.args = args
         self.message = (
-            f"InputExceptionError: Following variables are missing: {self.vars}"
+            f"InputExceptionError: Following variables are missing: {self.args}"
         )
 
     def __str__(self):

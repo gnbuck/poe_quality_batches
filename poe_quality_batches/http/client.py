@@ -1,7 +1,8 @@
 import json
 import requests
 
-from .helpers import format_stash_list, format_stash_content
+from .helpers import filter_quality_from_stash
+from settings.settings import SPECIAL_TABS
 
 
 def client(
@@ -10,10 +11,8 @@ def client(
     realm: str,
     league: str,
     character: str,
-    tab_index: str,
     poesessid: str,
     object_type: str,
-    force_object_type: bool,
     stash_name: str,
 ) -> list:
     """Gather inventory from web site and return a comprehensible list by the script."""
@@ -27,26 +26,44 @@ def client(
         poesessid,
         stash_name,
     )
+    if stash_name is not None:
+        stash_list = [stash for stash in stash_list if stash_name in stash["n"]]
 
-    stash_contents = [
-        get_stash_content(
-            url,
-            account,
-            realm,
-            league,
-            character,
-            poesessid,
-            object_type,
-            stash_metadata,
-        )
-        for stash_metadata in stash_list
+    formatted_stash_list = [
+        {"name": stash["n"], "id": stash["i"], "type": stash["type"]}
+        for stash in stash_list
+        if stash["type"] not in SPECIAL_TABS
     ]
 
-    formatted_stash_contents = [
-        format_stash_content(stash_content) for stash_content in stash_contents
+    stashes_with_quality_items = [
+        {
+            "id": stash_metadata["id"],
+            "name": stash_metadata["name"],
+            "type": stash_metadata["type"],
+            "results": {},
+            "items": filter_quality_from_stash(
+                get_stash_content(
+                    url,
+                    account,
+                    realm,
+                    league,
+                    character,
+                    poesessid,
+                    stash_metadata,
+                ),
+            ),
+        }
+        for stash_metadata in formatted_stash_list
     ]
 
-    return formatted_stash_contents
+    stashes = [
+        stash
+        for stash in stashes_with_quality_items
+        if len(stash["items"]["gems"]) > 0 or len(stash["items"]["flasks"]) > 0
+    ]
+    print(f"\nfiltered_stashes = {stashes}\n")
+
+    return stashes
 
 
 def get_stash_list(
@@ -74,11 +91,6 @@ def get_stash_list(
     response_data = json.loads(response.text)
     stash_list = response_data.get("tabs", [])
 
-    if stash_name is not None:
-        stash_list = [stash for stash in stash_list if stash_name in stash["n"]]
-
-    stash_list = format_stash_list(stash_list)
-
     return stash_list
 
 
@@ -89,7 +101,6 @@ def get_stash_content(
     league: str,
     character: str,
     poesessid: str,
-    object_type: str,
     stash_metadata: dict,
 ) -> list:
     """Gather the content of one stash."""
@@ -107,4 +118,5 @@ def get_stash_content(
     response = requests.get(url, cookies=cookies, params=params)
     response_data = json.loads(response.text)
     stash_content = response_data.get("items", [])
+
     return stash_content

@@ -1,7 +1,8 @@
 # IDE
 .vscode**
 
-# Project output
+# Project generated files
+config.py
 out.txt
 
 # Byte-compiled / optimized / DLL files

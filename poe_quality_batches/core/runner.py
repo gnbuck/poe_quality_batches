@@ -6,7 +6,7 @@ from .helpers import (
 )
 
 
-def runner(limit: int, items: list, items_len: int, uniques: list, debug: bool):
+def runner(items: list, items_len: int, uniques: list, limit: int, debug: bool):
     best_batches = list()
     best_batches_remaining = list()
     for start in uniques:
@@ -15,7 +15,7 @@ def runner(limit: int, items: list, items_len: int, uniques: list, debug: bool):
         batch = [start[1]]  # List of current batch based on the items
         batch_indexes = [start[0]]  # List of current batch based on the indexes
         batches, remaining = find_batches(
-            limit, items, items_len, indexes, batch, batch_indexes, list(), index, debug
+            items, items_len, limit, indexes, batch, batch_indexes, list(), index, debug
         )
         if len(batches) > len(best_batches):
             best_batches = batches.copy()
@@ -24,9 +24,9 @@ def runner(limit: int, items: list, items_len: int, uniques: list, debug: bool):
 
 
 def find_batches(
-    limit: int,
     items: list,
     items_len: int,
+    limit: int,
     indexes: list,
     batch: list,
     batch_indexes: list,
@@ -100,9 +100,9 @@ def find_batches(
         )
 
     return find_batches(
-        limit,
         items,
         items_len,
+        limit,
         indexes,
         batch,
         batch_indexes,

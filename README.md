@@ -6,12 +6,23 @@ This tool is a Python script to compute the best vendor receipe batches for obta
 
 It is able to query the inventory of a character via Path of Exile [official website](https://www.pathofexile.com/) and to tell you how to get the most possible of those currencies. Alternatively and for historical reason, it is able to compute the result via a [hardcoded list](poe_quality_batches/samples.py) of quality values.
 
+I don't know if either your game language or the language on the website affects the item properties the script queries. Please make sure to use English if you encounter any problems.
+
 ## Prerequisites
 
+- Git
 - Python 3.8
-- Make
+- Make (optionnal)
 
 ## Usage
+
+### Clone the project
+
+``` shell
+mkdir ~/repos
+git clone https://github.com/gnbuck/poe_quality_batches.git
+cd ~/repos/poe_quality_batches
+```
 
 ### Define environement variables
 
@@ -33,6 +44,16 @@ export STASH_NAME=<stash_to_inspect>
 - object_type: The object you want to compute. Can be either: flask or gem.
 - stash_name: The name of the stash you want to compute the item qualities
 
+Depending on what variables are assigned and their values, the script will act differently:
+
+| Object Type  | Stash Name           | Result                                                                          |
+| :----------: | :------------------: | :-----------------------------------------------------------------------------: |
+| Gem          | `Quad Stash`         | Search inside the tab named `Quad Stash` for all quality gems                 |
+| Gem          | N/A                  | Search in all tabs each quality gem                                             |
+| N/A          | `Glassblower Bauble` | Search inside the tab named `Glassblower Bauble` for all quality gems and flasks        |
+| N/A          | N/A                  | Search in all tabs each quality gems and flasks                                 |
+
+
 ### Create environnement
 
 ``` shell
@@ -50,6 +71,10 @@ make run
 ``` shell
 make run-offline
 ```
+
+## Usage on Windows
+
+I personnaly recommend you to runthe above procedure via WSL (Windows Subsystem for Linux). WSL is a Windows feature to execute a small Linux and it can be installed easily. If your CPU has not the virtualization support, please wait a future release, where all variables will be handled via a local web UI.
 
 ## Contributing
 

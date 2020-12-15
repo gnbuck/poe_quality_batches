@@ -15,12 +15,10 @@ if __name__ == "__main__":
     character = environ.get("CHARACTER", None)
     realm = environ.get("REALM", None)
     league = environ.get("LEAGUE", None).capitalize()
-    tab_index = environ.get("TAB_INDEX", None)
     poesessid = environ.get("POESESSID", None)
 
     # Script vars
     object_type = parse_object_type(OBJECT_TYPES, environ.get("OBJECT_TYPE", None))
-    force_object_type = bool(strtobool(environ.get("FORCE_OBJECT_TYPE", "false")))
     stash_name = environ.get("STASH_NAME", None)
 
     parser = argparse.ArgumentParser(allow_abbrev=True)
@@ -46,10 +44,8 @@ if __name__ == "__main__":
         realm,
         league,
         character,
-        tab_index,
         poesessid,
         object_type,
-        force_object_type,
         stash_name,
         online,
         LIMIT,
