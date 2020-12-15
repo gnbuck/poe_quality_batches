@@ -28,7 +28,7 @@ from .helpers import (
     find_uniques,
     print_stash_result,
 )
-from .http.client import client
+from .http.client import Client
 
 
 def main(
@@ -52,7 +52,7 @@ def main(
     if online is True:
         from settings.settings import TARGET, ENDPOINT
         url = TARGET + ENDPOINT
-        sample_data = client(
+        sample_data = Client(
             url,
             account,
             realm,
@@ -61,7 +61,7 @@ def main(
             poesessid,
             object_type,
             stash_name,
-        )
+        ).get_content()
         sample = sample_data
     else:
         from settings.samples import SAMPLES
@@ -73,21 +73,16 @@ def main(
     sys.setrecursionlimit(10000)
 
     for stash in sample:
-        # print(f"\n\n--------\nstash = {stash}\n")
 
         gems_in_stash = stash["items"].get("gems", None)
-        # print(f"\ngems_in_stash = {gems_in_stash}\n")
         if gems_in_stash is not None:
             gem_result = run(gems_in_stash, limit, debug)
             stash["results"]["gems_result"] = gem_result
 
         flasks_in_stash = stash["items"].get("flasks", None)
-        # print(f"\nflasks_in_stash = {flasks_in_stash}\n")
         if flasks_in_stash is not None:
             flask_result = run(flasks_in_stash, limit, debug)
             stash["results"]["flasks_result"] = flask_result
-
-    print(f"\nsample = {sample}\n")
 
 
 @do_debug
