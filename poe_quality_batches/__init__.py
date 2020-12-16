@@ -8,11 +8,10 @@ combining the values (integers) stored in a list.
 Todo
 ----
 * Features
-  * Gather inventory from official website
+  * Read variables from file instead of environnement variables
   * Run a local web interface to easily interact with the tool
 * Project
   * Implement Unit Tests
-  * Refactor HTTP module to oriented object style
 * Script
   * Simplify the win conditon
   * Ensure every available combination is tested
