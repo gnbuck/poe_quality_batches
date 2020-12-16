@@ -7,6 +7,8 @@ from .helpers import (
 
 
 def runner(items: list, items_len: int, uniques: list, limit: int, debug: bool):
+    if sum(items) < 40:
+        return [], items
     best_batches = list()
     best_batches_remaining = list()
     for start in uniques:

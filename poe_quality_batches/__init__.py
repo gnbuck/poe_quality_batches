@@ -22,7 +22,6 @@ import sys
 from .core.runner import runner
 from .exceptions.exception_handler import BadInput
 from .helpers import (
-    compute_values_from_indexes,
     do_debug,
     find_missing_vars,
     find_uniques,
@@ -51,8 +50,9 @@ def main(
 
     if online is True:
         from settings.settings import TARGET, ENDPOINT
+
         url = TARGET + ENDPOINT
-        sample_data = Client(
+        stashes = Client(
             url,
             account,
             realm,
@@ -62,34 +62,35 @@ def main(
             object_type,
             stash_name,
         ).get_content()
-        sample = sample_data
     else:
         from settings.samples import SAMPLES
+
         if debug is True:
-            sample = SAMPLES[1:2]
+            stashes = SAMPLES[1:2]
         else:
-            sample = SAMPLES
+            stashes = SAMPLES
 
     sys.setrecursionlimit(10000)
 
-    for stash in sample:
+    for stash in stashes:
 
         gems_in_stash = stash["items"].get("gems", None)
         if gems_in_stash is not None:
             gem_result = run(gems_in_stash, limit, debug)
-            stash["results"]["gems_result"] = gem_result
+            stash["results"].update({"gems_result": gem_result})
 
         flasks_in_stash = stash["items"].get("flasks", None)
         if flasks_in_stash is not None:
             flask_result = run(flasks_in_stash, limit, debug)
-            stash["results"]["flasks_result"] = flask_result
+            stash["results"].update({"flasks_result": flask_result})
+
+    print(f"\nstashes = {stashes}\n")
 
 
 @do_debug
 def run(items, limit, debug):
     """Wrapper for Runner module."""
 
-    print(items)
     items_len = len(items)
     items = sorted(items, reverse=True)
 
@@ -99,10 +100,11 @@ def run(items, limit, debug):
     uniques = find_uniques(items)
     res, remaining = runner(items, items_len, uniques, limit, debug)
 
-    print_stash_result(items, limit, res, remaining, debug)
+    if debug is True:
+        print_stash_result(items, limit, res, remaining)
     stash_result = {
         "result": res,
+        "compos": len(res),
         "remaining": remaining,
     }
-    print(f"\nstash_result = {stash_result}\n")
     return stash_result

@@ -56,15 +56,15 @@ def do_debug(func):
             original_stdout = sys.stdout
             with open("out.txt", "w") as f:
                 sys.stdout = f
-                func(*args)
+                return func(*args)
             sys.stdout = original_stdout
         else:
-            func(*args)
+            return func(*args)
 
     return wrapper
 
 
-def print_stash_result(items, limit, res, remaining, debug):
+def print_stash_result(items, limit, res, remaining):
     print(f"For {sum(items) / limit} potential compos,\n")
     print(
         f"{len(res)} compos can be really obtained\nBatches are:\n{res}\n"

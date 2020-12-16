@@ -5,7 +5,7 @@ from .helpers import filter_quality_from_stash
 from settings.settings import SPECIAL_TABS
 
 
-class Client():
+class Client:
     """Gather inventory from web site and return a comprehensible list by the script."""
 
     def __init__(
@@ -66,32 +66,26 @@ class Client():
             for stash in stashes_with_quality_items
             if len(stash["items"]["gems"]) > 0 or len(stash["items"]["flasks"]) > 0
         ]
-        print(f"\nfiltered_stashes = {self.stashes}\n")
 
         return self.stashes
 
     def get_stash_list(self) -> list:
         """Gather the complete list of one character's stashes."""
-        cookies = self.cookies
-        params = self.params
+        params = self.params.copy()
         params["tabs"] = 1
         params["tabIndex"] = 0
-        print(f"self.url = {self.url}")
-        print(f"self.cookies = {self.cookies}")
-        print(f"self.params = {self.params}")
-        response = requests.get(self.url, cookies=cookies, params=params)
+        response = requests.get(self.url, cookies=self.cookies, params=params)
         response_data = json.loads(response.text)
         stash_list = response_data.get("tabs", [])
 
         return stash_list
 
-    def get_stash_content(self, stash_metadata: dict,) -> list:
+    def get_stash_content(self, stash_metadata: dict) -> list:
         """Gather the content of one stash."""
-        cookies = self.cookies
-        params = self.params
+        params = self.params.copy()
         params["tabs"] = 0
         params["tabIndex"] = stash_metadata["id"]
-        response = requests.get(self.url, cookies=cookies, params=params)
+        response = requests.get(self.url, cookies=self.cookies, params=params)
         response_data = json.loads(response.text)
         stash_content = response_data.get("items", [])
 
