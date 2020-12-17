@@ -87,7 +87,8 @@ def main(
             flask_result = run(flasks_in_stash, limit, debug)
             stash["results"].update({"flasks_result": flask_result})
 
-    print(f"\nstashes = {stashes}\n")
+    res = print_stash_result(object_type, limit, stashes)
+    print(res)
 
 
 @do_debug
@@ -107,7 +108,7 @@ def run(items, limit, debug):
         print_stash_result(items, limit, res, remaining)
     stash_result = {
         "result": res,
-        "compos": len(res),
+        "currencies": len(res),
         "remaining": remaining,
     }
     return stash_result

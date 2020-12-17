@@ -1,4 +1,5 @@
 import argparse
+
 # from os import environ
 
 from distutils.util import strtobool
@@ -12,6 +13,7 @@ from config import (
     LEAGUE,
     POESESSID,
 )
+
 try:
     from config import OBJECT_TYPE
 except ImportError:

@@ -7,10 +7,7 @@ from .exceptions.exception_handler import BadObjectType
 
 
 def parse_object_type(object_types, object_type):
-    if (
-        object_type is None
-        or object_type == ""
-    ):
+    if object_type is None or object_type == "":
         return None
     try:
         _obj = object_type.lower()
@@ -88,9 +85,37 @@ def do_debug(func):
     return wrapper
 
 
-def print_stash_result(items, limit, res, remaining):
-    print(f"For {sum(items) / limit} potential compos,\n")
-    print(
-        f"{len(res)} compos can be really obtained\nBatches are:\n{res}\n"
-        f"Remaining items are:\n{compute_values_from_indexes(items, remaining)}"
+def print_stash_result(obj_type, limit, stashes):
+    r = ""
+    gem_result = "".join(
+        [
+            f"\nStash tab `{stash['name']}`, number {stash['id'] + 1}:\n"
+            f"For {sum(stash['items']['gems']) / limit} potential compos,\n"
+            f"{stash['results']['gems_result']['currencies']} Gemcutter's Prisms "
+            "can be really obtained\n"
+            f"Batches are:\n{stash['results']['gems_result']['result']}\n"
+            "Remaining items are:\n"
+            f"{compute_values_from_indexes(stash['items']['gems'], stash['results']['gems_result']['remaining'])}\n"  # noqa: E501
+            for stash in stashes
+            if stash["results"].get("gems_result", False)
+        ]
     )
+    flask_result = "".join(
+        [
+            f"\nStash tab `{stash['name']}`, number {stash['id'] + 1}:\n"
+            f"For {sum(stash['items']['flasks']) / limit} potential compos,\n"
+            f"{stash['results']['flasks_result']['currencies']} Glassblower's Baubles "
+            "can be really obtained\n"
+            f"Batches are:\n{stash['results']['flasks_result']['result']}\n"
+            "Remaining items are:\n"
+            f"{compute_values_from_indexes(stash['items']['flasks'], stash['results']['flasks_result']['remaining'])}\n"  # noqa: E501
+            for stash in stashes
+            if stash["results"].get("flasks_result", False)
+        ]
+    )
+    r += "\n\n" + 30 * "-" + "\nGEMS RESULT\n\n"
+    r += gem_result
+    r += "\n\n" + 30 * "-" + "\nFLASKS RESULT\n\n"
+    r += flask_result
+    r += "\n\n" + 30 * "-" + "\n\n"
+    return r
