@@ -1,3 +1,4 @@
+import copy
 import functools
 import re
 import sys
@@ -6,21 +7,44 @@ from .exceptions.exception_handler import BadObjectType
 
 
 def parse_object_type(object_types, object_type):
-    if object_type is None:
-        return -1
+    if (
+        object_type is None
+        or object_type == ""
+    ):
+        return None
     try:
         _obj = object_type.lower()
     except AttributeError:
         raise BadObjectType(object_types, object_type)
 
     if re.match(r"^flask.*$", _obj):
-        obj = object_types[0]["id"]
+        obj = object_types[0]["name"]
     elif re.match(r"^gem.*$", _obj):
-        obj = object_types[1]["id"]
+        obj = object_types[1]["name"]
     else:
         raise BadObjectType(object_types, object_type)
 
     return obj
+
+
+def filter_object_type(object_type, stashes):
+    # The base object can't be iterated over while beeing modified
+    temp_stashes = copy.deepcopy(stashes)
+    i = 0
+    object_type += "s"
+    # Remove unwanted type
+    for stash in temp_stashes:
+        for k, v in stash["items"].items():
+            if object_type not in k:
+                del stashes[i]["items"][k]
+        i += 1
+    # Remove empty stash
+    i = 0
+    for stash in stashes:
+        if len(stash["items"].get(object_type, [])) == 0:
+            del stashes[i]
+        i += 1
+    return stashes
 
 
 def find_missing_vars(*args):

@@ -20,8 +20,9 @@ I don't know if either your game language or the language on the website affects
 
 ``` shell
 mkdir ~/repos
+cd $_
 git clone https://github.com/gnbuck/poe_quality_batches.git
-cd ~/repos/poe_quality_batches
+cd poe_quality_batches
 ```
 
 ### Define environement variables
@@ -41,8 +42,8 @@ export STASH_NAME=<stash_to_inspect>
 - platform: On which platform your character is. Can be either: pc, ps4 or xbox. CAUTION! Only tested for pc.
 - league: The league on which your character is
 - poe_session_id: Cookie stored in your browser when you are logged into Path of Exile website
-- object_type: The object you want to compute. Can be either: flask or gem.
-- stash_name: The name of the stash you want to compute the item qualities
+- object_type (optional): The object you want to compute. Can be either: flask or gem.
+- stash_name (optional): The name of the stash you want to compute the item qualities
 
 Depending on what variables are assigned and their values, the script will act differently:
 

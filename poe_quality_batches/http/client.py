@@ -1,3 +1,4 @@
+import copy
 import json
 import requests
 
@@ -54,7 +55,7 @@ class Client:
                 "results": {},
                 "items": filter_quality_from_stash(
                     self.get_stash_content(
-                        stash_metadata,
+                        stash_metadata["id"],
                     ),
                 ),
             }
@@ -71,7 +72,7 @@ class Client:
 
     def get_stash_list(self) -> list:
         """Gather the complete list of one character's stashes."""
-        params = self.params.copy()
+        params = copy.deepcopy(self.params)
         params["tabs"] = 1
         params["tabIndex"] = 0
         response = requests.get(self.url, cookies=self.cookies, params=params)
@@ -80,11 +81,11 @@ class Client:
 
         return stash_list
 
-    def get_stash_content(self, stash_metadata: dict) -> list:
+    def get_stash_content(self, stash_id: int) -> dict:
         """Gather the content of one stash."""
-        params = self.params.copy()
+        params = copy.deepcopy(self.params)
         params["tabs"] = 0
-        params["tabIndex"] = stash_metadata["id"]
+        params["tabIndex"] = stash_id
         response = requests.get(self.url, cookies=self.cookies, params=params)
         response_data = json.loads(response.text)
         stash_content = response_data.get("items", [])

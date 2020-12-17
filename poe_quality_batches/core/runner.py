@@ -43,7 +43,7 @@ def find_batches(
         depth = 0
         for i in sorted(batch_indexes, reverse=True):
             # Checking if there is any available index not already taken after each
-            # item of the current batch
+            # item of the current batch (from the last to the first)
             if is_there_remaining(items_len, indexes + [index], i) is not True:
                 # If it is the case, increment the marker
                 depth += 1
@@ -92,7 +92,6 @@ def find_batches(
             index = batch_indexes[-1]
 
     if debug is True:
-        find_remaining(items_len, items, indexes)
         print(f"items = {items}")
         # DEBUG: check each item can be in batches
         find_adding_errors(items, batches)

@@ -20,7 +20,7 @@ def is_gem(item: dict) -> bool:
         if GEM_DESCRIPTION in item.get("descrText", None):
             return True
     except TypeError:
-        # Workaround because in some case, the get function can't parse the dict
+        # Workaround because for some items, the get function can't parse the dict
         pass
     return False
 

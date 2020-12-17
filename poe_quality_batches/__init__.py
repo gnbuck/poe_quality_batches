@@ -22,6 +22,7 @@ from .core.runner import runner
 from .exceptions.exception_handler import BadInput
 from .helpers import (
     do_debug,
+    filter_object_type,
     find_missing_vars,
     find_uniques,
     print_stash_result,
@@ -35,11 +36,11 @@ def main(
     league: str,
     character: str,
     poesessid: str,
-    object_type: int,
-    stash_name: int,
     online: bool,
     limit: int,
-    debug: bool,
+    object_type=None,
+    stash_name=None,
+    debug=False,
 ):
     """Main function."""
 
@@ -70,6 +71,9 @@ def main(
             stashes = SAMPLES
 
     sys.setrecursionlimit(10000)
+
+    if object_type is not None:
+        stashes = filter_object_type(object_type, stashes)
 
     for stash in stashes:
 
